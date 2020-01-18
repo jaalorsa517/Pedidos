@@ -4,11 +4,7 @@ from openpyxl import load_workbook
 
 @click.command()
 @click.argument('xlsx')
-@click.option('--sheet',
-              prompt=True,
-              default='Hoja1',
-              help='Nombre de la hoja a trabajar')
-def main(xlsx, sheet):
+def main(xlsx):
     """
     Script que resumirá los pedidos.
     Se requiere un archivo de excel, ocupando las 3 primeras columnas con la información 
@@ -17,7 +13,21 @@ def main(xlsx, sheet):
     Donde Nombre es un String, Cantidad un float de 1 punto y Unidad es un String
     """
     _workbook = load_workbook(xlsx)
-    _sheet = _workbook[sheet]
+    op = ''
+    i = 0
+    for sheet in _workbook.get_sheet_names():
+        i += 1
+        op += '{}.{}\n'.format(str(i),sheet)
+
+    while True:
+        try:
+            r = click.prompt('Ingrese la opción deseada:\n{}'.format(op))
+            _sheet = _workbook[_workbook.get_sheet_names()[int(r)-1]]
+            break
+        except ValueError:
+            continue
+        except IndexError:
+            continue
     _list_productos = _getProductos(_sheet)
 
 

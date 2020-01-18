@@ -18,6 +18,22 @@ def main(xlsx, sheet):
     """
     _workbook = load_workbook(xlsx)
     _sheet = _workbook[sheet]
+    _list_productos= _getProductos(_sheet)
+
+
+def _getProductos(sheet):
+    list=[]
+    void=[]
+    for col in sheet.iter_cols(min_row=1,max_col=1):
+        for cell in col:
+            if(cell.value == None):
+                void.append(cell.row)
+            else:
+                if (not cell.font.b):
+                    list.append(cell.value)
+                else:
+                    void.append(cell.row)
+    return (list,void)
 
 
 if __name__ == "__main__":

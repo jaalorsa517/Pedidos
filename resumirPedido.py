@@ -18,22 +18,22 @@ def main(xlsx, sheet):
     """
     _workbook = load_workbook(xlsx)
     _sheet = _workbook[sheet]
-    _list_productos= _getProductos(_sheet)
+    _list_productos = _getProductos(_sheet)
 
 
 def _getProductos(sheet):
-    list=[]
-    void=[]
-    for col in sheet.iter_cols(min_row=1,max_col=1):
+    '''
+    Función que obtiene todos los pedidos a un diccionario
+    @param sheet: Hoja de calculo
+    @return dic: Diccionario con la fila y el producto pedido
+    '''
+    list = {}
+    for col in sheet.iter_cols(min_row=1, max_col=1):
         for cell in col:
-            if(cell.value == None):
-                void.append(cell.row)
-            else:
+            if (not (cell.value == None)):
                 if (not cell.font.b):
-                    list.append(cell.value)
-                else:
-                    void.append(cell.row)
-    return (list,void)
+                    list[cell.row] = cell.value
+    return list
 
 
 if __name__ == "__main__":

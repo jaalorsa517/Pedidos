@@ -3,10 +3,12 @@ import click
 from openpyxl import load_workbook
 import organizarPedido as org
 
+
 @click.group()
 def main():
     """Programa que organizará los pedidos"""
     pass
+
 
 #METODO
 @main.command()
@@ -20,7 +22,7 @@ def getResume(xlsx):
     Donde Nombre es un String, Cantidad un float de 1 punto y Unidad es un String
     """
     _workbook = load_workbook(xlsx)
-    _sheet=getSheet(_workbook)
+    _sheet = org.getSheet(_workbook)
 
     #Obtener Dic {row:producto}
     _list_productos = org.getProductos(_sheet)
@@ -49,6 +51,7 @@ def getResume(xlsx):
 
     _workbook.save(xlsx)
 
+
 @main.command()
 @click.argument('xlsx')
 def getMedida(xlsx):
@@ -61,43 +64,15 @@ def getMedida(xlsx):
     """
     _workbook = load_workbook(xlsx)
 
-    _sheet=getSheet(_workbook)
-    
+    _sheet = org.getSheet(_workbook)
+
     #Obtener Dic {row:producto}
     _list_productos = org.getProductos(_sheet)
 
     for key, product in _list_productos.items():
-        _sheet.cells(row=key,column=3,value=org.get_unidad(product))
-    
+        _sheet.cell(row=key, column=3, value=org.get_unidad(product))
+
     _workbook.save(xlsx)
-
-
-def getSheet(book):
-    '''
-    Función que devuelve una hoja de calculo seleccionada por el usuario.
-    @param book: Libro xlsx
-    @return: Hoja de calculo
-    '''
-    #INICIO DEL MENU
-    op = ''
-    i = 0
-    for sheet in book.get_sheet_names():
-        i += 1
-        op += '{}.{}\n'.format(str(i), sheet)
-
-    while True:
-        try:
-            r = click.prompt('Ingrese la opción deseada:\n{}'.format(op))
-            sheet = book[book.get_sheet_names()[int(r) - 1]]
-            break
-        except ValueError:
-            continue
-        except IndexError:
-            continue
-    return sheet
-    #FIN DEL MENU
-
-    
 
 
 #PUNTO DE ENTRADA

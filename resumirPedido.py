@@ -3,37 +3,24 @@ import click
 from openpyxl import load_workbook
 import organizarPedido as org
 
+@click.group()
+def main():
+    """Programa que organizará los pedidos"""
+    pass
 
 #METODO
-@click.command()
+@main.command()
 @click.argument('xlsx')
-def main(xlsx):
+def getResume(xlsx):
     """
-    Script que resumirá los pedidos.
+    Resumirá los pedidos.
     Se requiere un archivo de excel, ocupando las 3 primeras columnas con la información 
     de la siguiente estructura:
     Nombre-Cantidad-Unidad.
     Donde Nombre es un String, Cantidad un float de 1 punto y Unidad es un String
     """
     _workbook = load_workbook(xlsx)
-
-    #INICIO DEL MENU
-    op = ''
-    i = 0
-    for sheet in _workbook.get_sheet_names():
-        i += 1
-        op += '{}.{}\n'.format(str(i), sheet)
-
-    while True:
-        try:
-            r = click.prompt('Ingrese la opción deseada:\n{}'.format(op))
-            _sheet = _workbook[_workbook.get_sheet_names()[int(r) - 1]]
-            break
-        except ValueError:
-            continue
-        except IndexError:
-            continue
-    #FIN DEL MENU
+    _sheet=getSheet(_workbook)
 
     #Obtener Dic {row:producto}
     _list_productos = org.getProductos(_sheet)
@@ -61,6 +48,56 @@ def main(xlsx):
         _sheet.cell(row=cont, column=3, value=org.get_unidad(product))
 
     _workbook.save(xlsx)
+
+@main.command()
+@click.argument('xlsx')
+def getMedida(xlsx):
+    """
+    Completará la columna de medida.
+    Se requiere un archivo de excel, ocupando las 3 primeras columnas con la información 
+    de la siguiente estructura:
+    Nombre-Cantidad-Unidad.
+    Donde Nombre es un String, Cantidad un float de 1 punto y Unidad es un String
+    """
+    _workbook = load_workbook(xlsx)
+
+    _sheet=getSheet(_workbook)
+    
+    #Obtener Dic {row:producto}
+    _list_productos = org.getProductos(_sheet)
+
+    for key, product in _list_productos.items():
+        _sheet.cells(row=key,column=3,value=org.get_unidad(product))
+    
+    _workbook.save(xlsx)
+
+
+def getSheet(book):
+    '''
+    Función que devuelve una hoja de calculo seleccionada por el usuario.
+    @param book: Libro xlsx
+    @return: Hoja de calculo
+    '''
+    #INICIO DEL MENU
+    op = ''
+    i = 0
+    for sheet in book.get_sheet_names():
+        i += 1
+        op += '{}.{}\n'.format(str(i), sheet)
+
+    while True:
+        try:
+            r = click.prompt('Ingrese la opción deseada:\n{}'.format(op))
+            sheet = book[book.get_sheet_names()[int(r) - 1]]
+            break
+        except ValueError:
+            continue
+        except IndexError:
+            continue
+    return sheet
+    #FIN DEL MENU
+
+    
 
 
 #PUNTO DE ENTRADA

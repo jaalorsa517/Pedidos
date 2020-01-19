@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import click
 from openpyxl import load_workbook
 
@@ -41,17 +42,21 @@ def main(xlsx):
 
     #Escribir titulo y encabezados
     row_max = sorted(_list_productos)[-1]
-    cont=row_max+2
+    cont = row_max + 2
     _sheet.cell(row=cont, column=1, value='RESUMEN')
-    cont+=2
+    cont += 2
     _sheet.cell(row=cont, column=1, value='Nombre')
     _sheet.cell(row=cont, column=2, value='Cantidad')
     _sheet.cell(row=cont, column=3, value='Unidad')
 
-    #Escribir en celdas el conjunto
+    #Escribir el resumen
     for product in _con_produtos:
-        cont+=1
+        cont += 1
         _sheet.cell(row=cont, column=1, value=product)
+        _sheet.cell(row=cont,
+                    column=2,
+                    value='=SUMIF(A5:A{rm},A{c},B5:B{rm})'.format(
+                        rm=row_max, c=cont))
 
     _workbook.save(xlsx)
 

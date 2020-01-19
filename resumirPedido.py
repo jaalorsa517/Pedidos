@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import click
 from openpyxl import load_workbook
+import organizarPedido as org
 
 
 #METODO
@@ -35,10 +36,10 @@ def main(xlsx):
     #FIN DEL MENU
 
     #Obtener Dic {row:producto}
-    _list_productos = _getProductos(_sheet)
+    _list_productos = org.getProductos(_sheet)
 
     #Obtener conjunto
-    _con_produtos = set(_list_productos.values())
+    _con_produtos = sorted(set(_list_productos.values()))
 
     #Escribir titulo y encabezados
     row_max = sorted(_list_productos)[-1]
@@ -55,26 +56,11 @@ def main(xlsx):
         _sheet.cell(row=cont, column=1, value=product)
         _sheet.cell(row=cont,
                     column=2,
-                    value='=SUMIF(A5:A{rm},A{c},B5:B{rm})'.format(
-                        rm=row_max, c=cont))
+                    value='=SUMIF(A5:A{rm},A{c},B5:B{rm})'.format(rm=row_max,
+                                                                  c=cont))
+        _sheet.cell(row=cont, column=3, value=org.get_unidad(product))
 
     _workbook.save(xlsx)
-
-
-#FUNCION
-def _getProductos(sheet):
-    '''
-    Función que obtiene todos los pedidos a un diccionario
-    @param sheet: Hoja de calculo
-    @return dic: Diccionario con la fila y el producto pedido
-    '''
-    list = {}
-    for col in sheet.iter_cols(min_row=1, max_col=1):
-        for cell in col:
-            if (not (cell.value == None)):
-                if (not cell.font.b):
-                    list[cell.row] = cell.value
-    return list
 
 
 #PUNTO DE ENTRADA

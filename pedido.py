@@ -10,9 +10,9 @@
 from modules.principal import main
 '''
 Archivo Inventario
-1. Buscar en la primera fila la fecha deseada
-2. Obtenida la columna, guardar todas las filas donde "Ped" sea != 0 or Null
-3.Guardar en un dict {id:,nombre:,tel:,email:,pedido:[]}
+1. Buscar en la primera fila la fecha deseada !
+2. Obtenida la columna, guardar todas las filas donde "Ped" sea != 0 or Null !
+3.Guardar en un dict {id:,nombre:,tel:,email:,pedido:{}}
 4.Repetir los pasos anteriores en cada hoja de calculo, guardandolos dentro una list
 
 Archivo Pedido

@@ -29,11 +29,31 @@ def getSheet(book):
     return sheet
 
 
-def getDataColumn(sheet,ini_row=1,col=1):
+def getPedido(sheet):
     '''
     Función que obtiene todos los pedidos a un diccionario
-    @param sheet: Hoja de calculo
-    @return dic: Diccionario {row:string}
+    @param sheet: Hoja de calculo.
+    @return dic: Diccionario {row:string}.
+    '''
+    list = {}
+    #Ciclo que recorre desde la fila ini_row y la columna col
+    for col in sheet.iter_cols(min_row=1, max_col=1):
+        for cell in col:
+            #Evalua si contiene dato
+            if (not (cell.value == None)):
+                #Evalua si el contendio esta en negrita (encabezado)
+                if (not cell.font.b):
+                    list[cell.row] = cell.value
+    return list
+
+
+def getDataColumn(sheet,ini_row=3,col=1):
+    '''
+    Función que obtiene todos los pedidos a un diccionario
+    @param sheet: Hoja de calculo.
+    @paramDefault ini_row: Primera fila de la iteracion.
+    @paramDefault col: Columna a la cual iterar.
+    @return dic: Diccionario {row:string}.
     '''
     list = {}
     #Ciclo que recorre desde la fila ini_row y la columna col

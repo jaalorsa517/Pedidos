@@ -1,26 +1,16 @@
 # -*- coding: utf-8 -*-
 
 import click
-from modules.principal import main
 from openpyxl import load_workbook
 import modules.utility as org
 
 
-@main.command()
-@click.argument('xlsx')
-def getResume(xlsx):
-    """
-    Resumirá los pedidos.
-    Se requiere un archivo de excel, ocupando las 3 primeras columnas con la información 
-    de la siguiente estructura:
-    Nombre-Cantidad-Unidad.
-    Donde Nombre es un String, Cantidad un float de 1 punto y Unidad es un String
-    """
+def resume(xlsx):
     _workbook = load_workbook(xlsx)
     _sheet = org.getSheet(_workbook)
 
     #Obtener Dic {row:producto}
-    _list_productos = org.getDataColumn(_sheet)
+    _list_productos = org.getPedido(_sheet)
 
     #Obtener conjunto
     _con_produtos = sorted(set(_list_productos.values()))

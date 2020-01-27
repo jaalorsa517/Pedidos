@@ -43,7 +43,7 @@ def getResume(xlsx):
 def orderAll(inventario, pedido):
     '''
     Método que organizará todo el pedido.
-    @param inventario: archivo xlsx con el inventario
-    @param pedido: archivo xlsx donde se hace el pedido
+    :param inventario: archivo xlsx con el inventario
+    :param pedido: archivo xlsx donde se hace el pedido
     '''
     order(inventario, pedido)

@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 import click
-from openpyxl.styles import fonts,Border
+from openpyxl.styles import Font, Border, Side
 
 
 def getSheet(book):
@@ -61,10 +61,10 @@ def getDataColumn(sheet, ini_row=1, col=1):
     for colu in sheet.iter_cols(min_row=ini_row, max_col=col, min_col=col):
         for cell in colu:
             #Evalua si finalizó la tabla
-            if (sheet[cell.row][0].value == None):
+            if (sheet[cell.row][0].value is None):
                 break
             #Evalua si contiene dato
-            if (not (cell.value == None) and (cell.value != 0)):
+            if (not (cell.value is None) and (cell.value != 0)):
                 list[sheet[cell.row][0].value] = cell.value
     return list
 
@@ -83,53 +83,64 @@ def datosInComment(coment):
     for d in _datos:
         try:
             i = d.split(':')
-            datos_dic[i[0].strip(' ')] = i[1].strip(' ')
+            datos_dic[i[0]] = i[1]
         except Exception:
             continue
     return datos_dic
 
 
-def cabecera(sheet, row, nom, id='', tel='', email=''):
+def cabecera(sheet, row, neg, nom='', id='', tel='', email=''):
+    '''
+    Realiza la cabecera del pedido
+    '''
+
     _cabecera = ('Producto', 'Cantidad', 'Medida')
-    sheet[row][0].value = 'Nombre: {}'.format(nom)
-    sheet[row + 1][0].value = 'Identifcacion: {}'.format(id)
-    sheet[row + 2][0].value = 'Telefono: {}'.format(tel)
-    sheet[row + 3][0].value = 'email: {}'.format(email)
-    for j in range(3):
-        # formato(sheet[row+j][0],'Arial',18,True)
+    sheet[row][0].value = 'Negocio: {}'.format(neg)
+    sheet[row + 1][0].value = 'Nombre: {}'.format(nom)
+    sheet[row + 2][0].value = 'Identifcacion: {}'.format(id)
+    sheet[row + 3][0].value = 'Telefono: {}'.format(tel)
+    sheet[row + 4][0].value = 'email: {}'.format(email)
+    for j in range(5):
+        formato(sheet[row + j][0], 'Arial', 18, True)
         sheet.merge_cells('A{col}:C{col}'.format(col=row + j))
     i = 0
     for c in _cabecera:
-        sheet[row + 4][i].value = c
-        # formato(sheet[row+4][i],'Arial',16,True)
-        # bordes(sheet[row+4][i])
+        sheet[row + 5][i].value = c
+        formato(sheet[row + 5][i], 'Arial', 16, True)
+        bordes(sheet[row + 5][i])
         i += 1
 
-def setPedido(sheet,row,pedido):
-    _row=row
-    for pro,can in pedido.items():
 
-        sheet[_row][0].value=pro
-        # formato(sheet[_row][0],'Arial',14,False)
-        # bordes(sheet[_row][0])
+def setPedido(sheet, row, pedido):
+    '''
+    Copia el pedido a la hoja
+    '''
+    _row = row
+    for pro, can in pedido.items():
 
-        sheet[_row][1].value=can
-        # formato(sheet[_row][1],'Arial',14,False)
-        # bordes(sheet[_row][0])
-        _row+=1
+        sheet[_row][0].value = pro
+        formato(sheet[_row][0], 'Arial', 14, False)
+        bordes(sheet[_row][0])
+
+        sheet[_row][1].value = can
+        formato(sheet[_row][1], 'Arial', 14, False)
+        bordes(sheet[_row][1])
+        _row += 1
 
 
-def formato(cell,font,size,b):
-    cell.style.font.bold=b
-    cell.style.font.name=font
-    cell.style.font.size=size
+def formato(cell, font, size, b):
+    '''
+    Asigna la fuente a la celda
+    '''
+    cell.font = Font(name=font, sz=size, bold=b)
 
 
 def bordes(celda):
-    celda.border.bottom.border_style: 'hair'
-    celda.border.left.border_style: 'hair'
-    celda.border.rigth.border_style: 'hair'
-    celda.border.top.border_style: 'hair'
+    '''
+    Asigna los bordes a la celda
+    '''
+    s = Side(border_style='hair', color='FF000000')
+    celda.border = Border(left=s, right=s, top=s, bottom=s)
 
 
 def get_unidad(product):
@@ -144,7 +155,8 @@ def get_unidad(product):
                'Leche montefrio*900*6', 'Leche prolinco*900*6',
                'Leche prolinco deslactosada*6', 'Leche semidescremada*1100*6')
     CAJA = ('Leche Ricura CAJA', 'Leche polvo prolinco*780 CAJA')
-    RISTRA = ('Leche en polvo RISTRA', 'Arequipe RISTRA')
+    RISTRA = ('Leche en polvo RISTRA', 'Kipe RISTRA')
+    KILO = ('Queso o cuajada de segunda*kilo')
 
     for p in PAQUETE:
         if (p == product):
@@ -161,5 +173,9 @@ def get_unidad(product):
     for p in RISTRA:
         if (p == product):
             return 'Ristra'
+
+    for p in KILO:
+        if (p == product):
+            return 'Kilo'
 
     return 'Unidad'

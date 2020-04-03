@@ -25,7 +25,7 @@ def order(inventario, pedido):
     _mes = 0
 
     for key, val in _mes_dict.items():
-        
+
         if (key == _fecha[2::]):
             _mes = val
             break
@@ -46,7 +46,7 @@ def order(inventario, pedido):
             cliente['neg'] = a1.value
         else:
             cliente['neg'] = hoja
-            
+
         'Recorrer las celdas B1:W1'
         for fila in _workbook[hoja].iter_rows(min_col=2, max_row=1):
             for cell in fila:
@@ -68,13 +68,14 @@ def order(inventario, pedido):
 
     _row = 2
     for i in inv:
-        if ('nom' in i and 'id' in i and 'tel' in i and 'email' in i):
-            ut.cabecera(_sheet, _row, i['neg'], i['nom'], i['id'], i['tel'],
-                        i['email'])
+        #if ('nom' in i and 'id' in i and 'tel' in i and 'email' in i):
+        if ('nom' in i):
+            #ut.cabecera(_sheet,_row,i['neg'],i['nom'],i['id'],i['tel'],i['email'])
+            ut.cabecera(_sheet, _row, i['neg'], i['nom'])
         else:
             ut.cabecera(_sheet, _row, i['neg'])
 
-        _row += 6
+        _row += 3
         ut.setPedido(_sheet, _row, i['pedido'])
         _row += len(i['pedido']) + 1
 

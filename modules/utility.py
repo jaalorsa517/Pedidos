@@ -93,21 +93,22 @@ def cabecera(sheet, row, neg, nom='', id='', tel='', email=''):
     '''
     Realiza la cabecera del pedido
     '''
-
+    n = 1
     _cabecera = ('Producto', 'Cantidad', 'Medida')
     sheet[row][0].value = 'Negocio: {}'.format(neg)
-    sheet[row + 1][0].value = 'Nombre: {}'.format(nom)
-    sheet[row + 2][0].value = 'Identifcacion: {}'.format(id)
-    sheet[row + 3][0].value = 'Telefono: {}'.format(tel)
-    sheet[row + 4][0].value = 'email: {}'.format(email)
-    for j in range(5):
+    sheet[row + n][0].value = 'Nombre: {}'.format(nom)
+    # sheet[row + 2][0].value = 'Identifcacion: {}'.format(id)
+    # sheet[row + 3][0].value = 'Telefono: {}'.format(tel)
+    # sheet[row + 4][0].value = 'email: {}'.format(email)
+    for j in range(2):
         formato(sheet[row + j][0], 'Arial', 18, True)
         sheet.merge_cells('A{col}:C{col}'.format(col=row + j))
     i = 0
+    n = 2
     for c in _cabecera:
-        sheet[row + 5][i].value = c
-        formato(sheet[row + 5][i], 'Arial', 16, True)
-        bordes(sheet[row + 5][i])
+        sheet[row + n][i].value = c
+        formato(sheet[row + n][i], 'Arial', 16, True)
+        bordes(sheet[row + n][i])
         i += 1
 
 
@@ -155,7 +156,7 @@ def get_unidad(product):
                'Leche montefrio*900*6', 'Leche prolinco*900*6',
                'Leche prolinco deslactosada*6', 'Leche semidescremada*1100*6')
     CAJA = ('Leche Ricura CAJA', 'Leche polvo prolinco*780 CAJA')
-    RISTRA = ('Leche en polvo RISTRA', 'Kipe RISTRA')
+    RISTRA = ('Leche en polvo RISTRA', 'Kipe RISTRA','Leche condensada RISTRA')
     KILO = ('Queso o cuajada de segunda*kilo')
 
     for p in PAQUETE:

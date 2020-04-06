@@ -50,7 +50,6 @@ def on_btProcesar_clicked(boton):
     global fecha
     global selfpath
 
-    # path=selfpath+'AndesInventario.xlsx'
 
     if (path is not None and fecha is not None):
 

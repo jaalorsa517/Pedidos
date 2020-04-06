@@ -2,12 +2,14 @@
 import click
 from datetime import datetime
 from openpyxl import load_workbook
+from openpyxl.styles import Font, Alignment
 import modules.utility as ut
 
 
-def order(inventario, pedido):
+def order(inventario, pedido, fecha=None):
     _workbook = load_workbook(inventario)
-    _fecha = click.prompt("Ingrese fecha #Mes(3)")
+    _fecha = None
+    _fechaDate = None
     _mes_dict = {
         'ene': 1,
         'feb': 2,
@@ -22,15 +24,26 @@ def order(inventario, pedido):
         'nov': 11,
         'dic': 12
     }
-    _mes = 0
+    if (fecha is None):
+        _fecha = click.prompt("Ingrese fecha #Mes(3)")
+        _mes = 0
 
-    for key, val in _mes_dict.items():
+        for key, val in _mes_dict.items():
 
-        if (key == _fecha[2::]):
-            _mes = val
-            break
+            if (key == _fecha[2::]):
+                _mes = val
+                break
+        _fechaDate = datetime(2020, _mes, int(_fecha[0:2]))
+        _fechaDate.date().day
 
-    _fechaDate = datetime(2020, _mes, int(_fecha[0:2]))
+    else:
+        for key, val in _mes_dict.items():
+            if (val == fecha.month):
+                _fecha = '{}{}'.format(fecha.day, key)
+                break
+
+        _fechaDate = fecha
+
     inv = []
 
     for hoja in _workbook.sheetnames:
@@ -47,11 +60,13 @@ def order(inventario, pedido):
         else:
             cliente['neg'] = hoja
 
-        'Recorrer las celdas B1:W1'
+        'Recorrer las primera fila'
         for fila in _workbook[hoja].iter_rows(min_col=2, max_row=1):
             for cell in fila:
                 if (cell.value is not None):
-                    if (cell.value == _fecha or cell.value == _fechaDate):
+
+                    if (_fecha in str(cell.value)
+                            or str(_fechaDate) in str(cell.value)):
                         cliente['pedido'] = ut.getDataColumn(_workbook[hoja],
                                                              ini_row=3,
                                                              col=cell.column +
@@ -66,7 +81,14 @@ def order(inventario, pedido):
     #Se crea la nueva hoja
     _sheet = _workbook.create_sheet(_fecha)
 
+    #Formato de la cabecera
+    _sheet.merge_cells('A1:C1')
+    _sheet['A1'].value = 'ANDES {}'.format(_fecha)
+    _sheet['A1'].font = Font(name='Arial', size=20, bold=True)
+    _sheet['A1'].alignment = Alignment(horizontal='center')
+
     _row = 2
+
     for i in inv:
         #if ('nom' in i and 'id' in i and 'tel' in i and 'email' in i):
         if ('nom' in i):

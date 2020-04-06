@@ -23,8 +23,10 @@ def getSheet(book):
             sheet = book[book.get_sheet_names()[int(r) - 1]]
             break
         except ValueError:
+            #Es una mala práctica
             continue
         except IndexError:
+            #Es una mala práctica
             continue
     #FIN DEL MENU
     return sheet

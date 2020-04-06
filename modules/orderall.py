@@ -31,7 +31,7 @@ def order(inventario, pedido, fecha=None):
         for key, val in _mes_dict.items():
 
             if (key == _fecha[2::]):
-                _mes = val
+                _mes = val.capitalize()
                 break
         _fechaDate = datetime(2020, _mes, int(_fecha[0:2]))
         _fechaDate.date().day
@@ -39,7 +39,7 @@ def order(inventario, pedido, fecha=None):
     else:
         for key, val in _mes_dict.items():
             if (val == fecha.month):
-                _fecha = '{}{}'.format(fecha.day, key)
+                _fecha = '{}{}'.format(fecha.day, key.capitalize())
                 break
 
         _fechaDate = fecha

@@ -65,8 +65,9 @@ def order(inventario, pedido, fecha=None):
             for cell in fila:
                 if (cell.value is not None):
 
-                    if (_fecha in str(cell.value)
-                            or str(_fechaDate) in str(cell.value)):
+                    if (_fecha.upper() in str(cell.value).upper()
+                            or str(_fechaDate).upper() in str(
+                                cell.value).upper()):
                         cliente['pedido'] = ut.getDataColumn(_workbook[hoja],
                                                              ini_row=3,
                                                              col=cell.column +

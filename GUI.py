@@ -6,6 +6,9 @@ import os
 # gi.require_version('Gtk', '3.0')
 # from gi.repository import Gtk
 import tkinter as tk
+import tkcalendar as cld
+import tkinter.filedialog as fdl
+import tkinter.messagebox as msg
 from modules import orderall, getmedida
 from openpyxl import Workbook, load_workbook
 
@@ -13,79 +16,93 @@ hoy = datetime.date.today()
 selfpath = os.getcwd()
 path = None
 fecha = None
+path = None
+FONT = 'Arial 14'
+
+
+def on_btArchivo_clic():
+    global path
+    global path
+    path = fdl.askopenfilename()
+
+    if ('/' in path):
+        _t = path.split('/')
+    elif ('\\' in path):
+        _t = path.split('\\')
+
+    _txt = _t[-1]
+    btArchivo.configure(text=_txt)
+
+
+def on_btProcesar_clic():
+    global path
+    global fecha
+
+    fecha =calendar.parse_date(calendar.get_date())
+
+    if (path is not None and fecha is not None):
+
+        if ('.xlsx' in path):
+
+            pedido_path = 'Pedido.xlsx'
+
+            if (os.path.isfile(pedido_path)):
+                os.remove(pedido_path)
+
+            pedido = Workbook()
+            pedido.save(pedido_path)
+
+            orderall.order(path, pedido_path, fecha)
+            getmedida.medida(pedido_path, True)
+
+            pedido = load_workbook(pedido_path)
+            pedido.remove(pedido.worksheets[0])
+            pedido.save(pedido_path)
+
+            msg.showinfo('Finalizó el proceso', 'El proceso terminó con éxito')
+
+        else:
+
+            msg.showwarning('Archivo erróneo',
+                            'Por favor seleccione un archivo XLSX')
+
+    else:
+        msg.showwarning('Falta seleccionar la fecha o el archivo',
+                        'Por favor seleccione una fecha y/o un archivo')
+
 
 win = tk.Tk()
 win.title("Pedido")
-win.geometry('350x200')
+win.geometry('600x400')
 
-# calendar = builder.get_object("calendar")
-# calendar.day = hoy.day
-# calendar.month = hoy.month
-# calendar.year = hoy.year
+f_main = tk.Frame(win)
+f_main.pack(expand=True)
 
-# dlInfo = builder.get_object('dlInfo')
+f_g1 = tk.Frame(f_main)
+f_g1.pack()
 
-# def day_select(day):
-#     global fecha
-#     fecha = datetime.date(day.get_date().year,
-#                           day.get_date().month + 1,
-#                           day.get_date().day)
+f_g2 = tk.Frame(f_main)
+f_g2.pack()
 
-# def on_btPath_file_set(file):
-#     global path
-#     path = file.get_file().get_path()
+f_g3 = tk.Frame(f_main)
+f_g3.pack()
 
-# def on_btProcesar_clicked(boton):
-#     global path
-#     global fecha
-#     global selfpath
+label = tk.Label(f_g1, text='Archivo')
+label.grid(row=0, column=0)
 
-#     if (path is not None and fecha is not None):
+btArchivo = tk.Button(f_g1, text='Seleccionar...', command=on_btArchivo_clic)
+btArchivo.grid(row=0, column=1)
 
-#         if ('.xlsx' in path):
+calendar = cld.Calendar(f_g2,
+                        selectmode='day',
+                        year=hoy.year,
+                        month=hoy.month,
+                        day=hoy.day,
+                        font=FONT)
+calendar.pack(expand=True)
 
-#             _selfpath = selfpath + '/pedido.xlsx'
-
-#             if (os.path.isfile(_selfpath)):
-#                 os.remove(_selfpath)
-
-#             pedido = Workbook()
-#             pedido.save(_selfpath)
-
-#             orderall.order(path, _selfpath, fecha)
-#             getmedida.medida(_selfpath, True)
-
-#             pedido = load_workbook(_selfpath)
-#             pedido.remove(pedido.worksheets[0])
-#             pedido.save(_selfpath)
-
-#             dlInfo.set_property('text', 'Finalizó el proceso')
-#             dlInfo.set_property('secondary_text',
-#                                 'El proceso terminó con éxito')
-
-#         else:
-#             dlInfo.set_property('text', 'Archivo erróneo')
-#             dlInfo.set_property('secondary_text',
-#                                 'Por favor seleccione un archivo XLSX')
-
-#     else:
-#         dlInfo.set_property('text', 'Falta seleccionar la fecha o el archivo.')
-#         dlInfo.set_property('secondary_text',
-#                             'Por favor seleccione una fecha y/o un archivo')
-
-#     dlInfo.run()
-
-# def on_btDialog_clicked(boton):
-#     dlInfo.hide()
-
-# handlers = {
-#     "on_main_destroy": Gtk.main_quit,
-#     "on_btPath_file_set": on_btPath_file_set,
-#     "on_btProcesar_clicked": on_btProcesar_clicked,
-#     "day_select": day_select,
-#     "on_btDialog_clicked": on_btDialog_clicked
-# }
-# builder.connect_signals(handlers)
+btProcesar = tk.Button(f_g3, text='Procesar', command=on_btProcesar_clic)
+btProcesar.pack()
 
 if __name__ == "__main__":
     win.mainloop()

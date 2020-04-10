@@ -1,48 +1,39 @@
 # -*- coding: utf-8 -*-
-import click
-from datetime import datetime
 from openpyxl import load_workbook
 from openpyxl.styles import Font, Alignment
 import modules.utility as ut
+import datetime
+
+mes_dict = {
+    'ene': 1,
+    'feb': 2,
+    'mar': 3,
+    'abr': 4,
+    'may': 5,
+    'jun': 6,
+    'jul': 7,
+    'ago': 8,
+    'sep': 9,
+    'oct': 10,
+    'nov': 11,
+    'dic': 12
+}
 
 
-def order(inventario, pedido, fecha=None):
+def dateToString(date_):
+    for key, val in mes_dict.items():
+        if (val is date_.month):
+            _fecha = '{}{}'.format(date_.day, key)
+            return _fecha
+    return ''
+
+
+def order(inventario, pedido, fecha):
     _workbook = load_workbook(inventario)
-    _fecha = None
-    _fechaDate = None
-    _mes_dict = {
-        'ene': 1,
-        'feb': 2,
-        'mar': 3,
-        'abr': 4,
-        'may': 5,
-        'jun': 6,
-        'jul': 7,
-        'ago': 8,
-        'sep': 9,
-        'oct': 10,
-        'nov': 11,
-        'dic': 12
-    }
-    if (fecha is None):
-        _fecha = click.prompt("Ingrese fecha #Mes(3)")
-        _mes = 0
-
-        for key, val in _mes_dict.items():
-
-            if (key == _fecha[2::]):
-                _mes = val.capitalize()
-                break
-        _fechaDate = datetime(2020, _mes, int(_fecha[0:2]))
-        _fechaDate.date().day
-
-    else:
-        for key, val in _mes_dict.items():
-            if (val == fecha.month):
-                _fecha = '{}{}'.format(fecha.day, key.capitalize())
-                break
-
-        _fechaDate = fecha
+    _fecha = dateToString(fecha)
+    if (len(_fecha) == 4):
+        _fecha = '0{}'.format(_fecha)
+    # _fechaDate = fecha
 
     inv = []
 
@@ -53,7 +44,7 @@ def order(inventario, pedido, fecha=None):
         if (a1.comment is not None):
             cliente = ut.datosInComment(a1.comment.text)
         else:
-            click.echo("No existe comentario en la hoja {}.".format(hoja))
+            print("No existe comentario en la hoja {}.".format(hoja))
 
         if (a1.value is not None):
             cliente['neg'] = a1.value
@@ -65,12 +56,51 @@ def order(inventario, pedido, fecha=None):
             for cell in fila:
                 if (cell.value is not None):
 
-                    if (_fecha in str(cell.value)
-                            or str(_fechaDate) in str(cell.value)):
+                    cell_value = ''
+                    sw = False
+
+                    if (type(cell.value) == datetime.datetime):
+                        cell_value = dateToString(cell.value)
+                        if (len(cell_value) == 4):
+                            cell_value = '0{}'.format(cell_value)
+
+                    elif (type(cell.value) == str):
+                        if ('/' in cell.value):
+                            _cell_values = cell.value.split('/')
+                            for i in _cell_values:
+                                if (not (i.isnumeric())):
+                                    sw = False
+                                    break
+                                else:
+                                    sw = True
+
+                        if (cell.value[0:2].isnumeric() and len(cell.value) > 5
+                                and not sw):
+                            cell_value = cell.value[0:5]
+
+                        elif (cell.value[0].isnumeric() and len(cell.value) > 5
+                              and not sw):
+                            cell_value = '0{}'.format(cell.value[0:4])
+
+                        elif (cell.value[0:2].isnumeric()
+                              and len(cell.value) <= 5):
+                            cell_value = cell.value
+
+                        elif (cell.value[0].isnumeric()
+                              and len(cell.value) == 4):
+                            cell_value = '0{}'.format(cell.value)
+                        elif (sw):
+                            cell_value = dateToString(
+                                datetime.datetime(day=int(_cell_values[0]),
+                                                  month=int(_cell_values[1]),
+                                                  year=int(_cell_values[2])))
+
+                    if (_fecha.upper() == cell_value.upper()):
                         cliente['pedido'] = ut.getDataColumn(_workbook[hoja],
                                                              ini_row=3,
                                                              col=cell.column +
                                                              1)
+
         if ('pedido' in cliente):
             if (len(cliente['pedido']) > 0):
                 #[{'nom':'','pedido':{}}]

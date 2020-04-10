@@ -1,17 +1,11 @@
 # -*- coding:utf-8 -*-
-'''
-WIDGETS
-btPath: file_set es el manipulador
-btProcesar: procesa todo el documento xlsx y crea un nuevo xlsx con el resumen
-    on_btProcesar_clicked
-calendar: day_select es el manipulador
-'''
 
 import datetime
 import os
-import gi
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk
+# import gi
+# gi.require_version('Gtk', '3.0')
+# from gi.repository import Gtk
+import tkinter as tk
 from modules import orderall, getmedida
 from openpyxl import Workbook, load_workbook
 
@@ -20,86 +14,78 @@ selfpath = os.getcwd()
 path = None
 fecha = None
 
-builder = None
-builder = Gtk.Builder()
-builder.add_from_file("GUI.glade")
-window = builder.get_object("main")
+win = tk.Tk()
+win.title("Pedido")
+win.geometry('350x200')
 
-calendar = builder.get_object("calendar")
-calendar.day = hoy.day
-calendar.month = hoy.month
-calendar.year = hoy.year
+# calendar = builder.get_object("calendar")
+# calendar.day = hoy.day
+# calendar.month = hoy.month
+# calendar.year = hoy.year
 
-dlInfo = builder.get_object('dlInfo')
+# dlInfo = builder.get_object('dlInfo')
 
+# def day_select(day):
+#     global fecha
+#     fecha = datetime.date(day.get_date().year,
+#                           day.get_date().month + 1,
+#                           day.get_date().day)
 
-def day_select(day):
-    global fecha
-    fecha = datetime.date(day.get_date().year,
-                          day.get_date().month + 1,
-                          day.get_date().day)
+# def on_btPath_file_set(file):
+#     global path
+#     path = file.get_file().get_path()
 
+# def on_btProcesar_clicked(boton):
+#     global path
+#     global fecha
+#     global selfpath
 
-def on_btPath_file_set(file):
-    global path
-    path = file.get_file().get_path()
+#     if (path is not None and fecha is not None):
 
+#         if ('.xlsx' in path):
 
-def on_btProcesar_clicked(boton):
-    global path
-    global fecha
-    global selfpath
+#             _selfpath = selfpath + '/pedido.xlsx'
 
+#             if (os.path.isfile(_selfpath)):
+#                 os.remove(_selfpath)
 
-    if (path is not None and fecha is not None):
+#             pedido = Workbook()
+#             pedido.save(_selfpath)
 
-        if ('.xlsx' in path):
+#             orderall.order(path, _selfpath, fecha)
+#             getmedida.medida(_selfpath, True)
 
-            _selfpath = selfpath + '/pedido.xlsx'
+#             pedido = load_workbook(_selfpath)
+#             pedido.remove(pedido.worksheets[0])
+#             pedido.save(_selfpath)
 
-            if (os.path.isfile(_selfpath)):
-                os.remove(_selfpath)
+#             dlInfo.set_property('text', 'Finalizó el proceso')
+#             dlInfo.set_property('secondary_text',
+#                                 'El proceso terminó con éxito')
 
-            pedido = Workbook()
-            pedido.save(_selfpath)
+#         else:
+#             dlInfo.set_property('text', 'Archivo erróneo')
+#             dlInfo.set_property('secondary_text',
+#                                 'Por favor seleccione un archivo XLSX')
 
-            orderall.order(path, _selfpath, fecha)
-            getmedida.medida(_selfpath, True)
+#     else:
+#         dlInfo.set_property('text', 'Falta seleccionar la fecha o el archivo.')
+#         dlInfo.set_property('secondary_text',
+#                             'Por favor seleccione una fecha y/o un archivo')
 
-            pedido = load_workbook(_selfpath)
-            pedido.remove(pedido.worksheets[0])
-            pedido.save(_selfpath)
+#     dlInfo.run()
 
-            dlInfo.set_property('text', 'Finalizó el proceso')
-            dlInfo.set_property('secondary_text',
-                                'El proceso terminó con éxito')
+# def on_btDialog_clicked(boton):
+#     dlInfo.hide()
 
-        else:
-            dlInfo.set_property('text', 'Archivo erróneo')
-            dlInfo.set_property('secondary_text',
-                                'Por favor seleccione un archivo XLSX')
-
-    else:
-        dlInfo.set_property('text', 'Falta seleccionar la fecha o el archivo.')
-        dlInfo.set_property('secondary_text',
-                            'Por favor seleccione una fecha y/o un archivo')
-
-    dlInfo.run()
-
-
-def on_btDialog_clicked(boton):
-    dlInfo.hide()
-
-
-handlers = {
-    "on_main_destroy": Gtk.main_quit,
-    "on_btPath_file_set": on_btPath_file_set,
-    "on_btProcesar_clicked": on_btProcesar_clicked,
-    "day_select": day_select,
-    "on_btDialog_clicked": on_btDialog_clicked
-}
-builder.connect_signals(handlers)
+# handlers = {
+#     "on_main_destroy": Gtk.main_quit,
+#     "on_btPath_file_set": on_btPath_file_set,
+#     "on_btProcesar_clicked": on_btProcesar_clicked,
+#     "day_select": day_select,
+#     "on_btDialog_clicked": on_btDialog_clicked
+# }
+# builder.connect_signals(handlers)
 
 if __name__ == "__main__":
-    window.show_all()
-    Gtk.main()
+    win.mainloop()

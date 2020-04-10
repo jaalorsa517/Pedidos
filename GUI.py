@@ -17,7 +17,8 @@ selfpath = os.getcwd()
 path = None
 fecha = None
 path = None
-FONT = 'Arial 14'
+FONT = 'Verdana'
+FON_SIZE = 24
 
 
 def on_btArchivo_clic():
@@ -38,7 +39,7 @@ def on_btProcesar_clic():
     global path
     global fecha
 
-    fecha =calendar.parse_date(calendar.get_date())
+    fecha = calendar.parse_date(calendar.get_date())
 
     if (path is not None and fecha is not None):
 
@@ -72,20 +73,21 @@ def on_btProcesar_clic():
 
 
 win = tk.Tk()
+win.resizable(0, 0)
 win.title("Pedido")
-win.geometry('600x400')
+win.geometry('350x200')
 
 f_main = tk.Frame(win)
 f_main.pack(expand=True)
 
 f_g1 = tk.Frame(f_main)
-f_g1.pack()
+f_g1.pack(expand=True)
 
 f_g2 = tk.Frame(f_main)
-f_g2.pack()
+f_g2.pack(expand=True)
 
 f_g3 = tk.Frame(f_main)
-f_g3.pack()
+f_g3.pack(expand=True)
 
 label = tk.Label(f_g1, text='Archivo')
 label.grid(row=0, column=0)

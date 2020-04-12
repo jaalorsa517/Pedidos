@@ -2,9 +2,6 @@
 
 import datetime
 import os
-# import gi
-# gi.require_version('Gtk', '3.0')
-# from gi.repository import Gtk
 import tkinter as tk
 import tkcalendar as cld
 import tkinter.filedialog as fdl
@@ -17,12 +14,9 @@ selfpath = os.getcwd()
 path = None
 fecha = None
 path = None
-FONT = 'Verdana'
-FON_SIZE = 24
 
 
 def on_btArchivo_clic():
-    global path
     global path
     path = fdl.askopenfilename()
 
@@ -75,10 +69,10 @@ def on_btProcesar_clic():
 win = tk.Tk()
 win.resizable(0, 0)
 win.title("Pedido")
-win.geometry('350x200')
+win.geometry('400x350')
 
 f_main = tk.Frame(win)
-f_main.pack(expand=True)
+f_main.pack(expand=True,fill=tk.BOTH)
 
 f_g1 = tk.Frame(f_main)
 f_g1.pack(expand=True)
@@ -90,9 +84,11 @@ f_g3 = tk.Frame(f_main)
 f_g3.pack(expand=True)
 
 label = tk.Label(f_g1, text='Archivo')
+label.configure(font=('Arial',18))
 label.grid(row=0, column=0)
 
 btArchivo = tk.Button(f_g1, text='Seleccionar...', command=on_btArchivo_clic)
+btArchivo.config(font=('Arial',16))
 btArchivo.grid(row=0, column=1)
 
 calendar = cld.Calendar(f_g2,
@@ -100,10 +96,23 @@ calendar = cld.Calendar(f_g2,
                         year=hoy.year,
                         month=hoy.month,
                         day=hoy.day,
-                        font=FONT)
+                        font=('Arial',16),
+                        locale='es_CO',
+                        bordercolor='black',
+                        background='#009600',
+                        headersbackground ='#00b400',
+                        normalbackground='#b4ffb4',
+                        weekendbackground='#87ff87',
+                        othermonthbackground='#32ff32',
+                        othermonthwebackground='#32ff32',
+                        othermonthweforeground ='black',
+                        othermonthforeground ='black',
+                        weekendforeground='black',
+                        normalforeground='black')
 calendar.pack(expand=True)
 
 btProcesar = tk.Button(f_g3, text='Procesar', command=on_btProcesar_clic)
+btProcesar.config(font=('Arial',16))
 btProcesar.pack()
 
 if __name__ == "__main__":

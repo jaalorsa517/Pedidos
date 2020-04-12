@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+'''
+Modulo que obtiene las medidas de los productos
+'''
 
 import click
 from openpyxl import load_workbook

@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+'''
+Modulo que obtiene los productos, las cantidades y el usuario.
+Este modulo tambien estructura todos los datos en un nuevo archivo xlsx
+'''
+
 from openpyxl import load_workbook
 from openpyxl.styles import Font, Alignment
 import modules.utility as ut
@@ -21,6 +26,9 @@ mes_dict = {
 
 
 def dateToString(date_):
+    '''
+    Funcion que genera una fecha del formato #xxx. Ejemplo: 10abr, 18may
+    '''
     for key, val in mes_dict.items():
         if (val is date_.month):
             _fecha = '{}{}'.format(date_.day, key)
@@ -31,16 +39,18 @@ def dateToString(date_):
 def order(inventario, pedido, fecha):
     _workbook = load_workbook(inventario)
     _fecha = dateToString(fecha)
+
+    #si la fecha es menor a 10 dias (9mes) le agrega el 0 (09mes)
     if (len(_fecha) == 4):
         _fecha = '0{}'.format(_fecha)
-    # _fechaDate = fecha
 
     inv = []
 
     for hoja in _workbook.sheetnames:
-        a1 = _workbook[hoja][1][0]
+        a1 = _workbook[hoja][1][0]  #Obtiene el nombre del negocio
         cliente = {}
 
+        #Verifica si tiene un comentario y datos en él
         if (a1.comment is not None):
             cliente = ut.datosInComment(a1.comment.text)
         else:
@@ -51,7 +61,7 @@ def order(inventario, pedido, fecha):
         else:
             cliente['neg'] = hoja
 
-        'Recorrer las primera fila'
+        #Recorrer las primeras filas de cada hoja
         for fila in _workbook[hoja].iter_rows(min_col=2, max_row=1):
             for cell in fila:
                 if (cell.value is not None):
@@ -59,6 +69,7 @@ def order(inventario, pedido, fecha):
                     cell_value = ''
                     sw = False
 
+                    #Verifica el tipo de datos
                     if (type(cell.value) == datetime.datetime):
                         cell_value = dateToString(cell.value)
                         if (len(cell_value) == 4):
@@ -95,6 +106,8 @@ def order(inventario, pedido, fecha):
                                                   month=int(_cell_values[1]),
                                                   year=int(_cell_values[2])))
 
+                    #Luego de evaluar el tipo de dato, verifica el dato ingresado
+                    #y lo comparo con el dato encontrado en la hoja
                     if (_fecha.upper() == cell_value.upper()):
                         cliente['pedido'] = ut.getDataColumn(_workbook[hoja],
                                                              ini_row=3,

@@ -1,4 +1,7 @@
 # -*- coding:utf-8 -*-
+''' 
+Modulo que crea la interfaz gráfica GUI
+'''
 
 import datetime
 import os
@@ -10,12 +13,10 @@ from modules import orderall, getmedida
 from openpyxl import Workbook, load_workbook
 
 hoy = datetime.date.today()
-selfpath = os.getcwd()
 path = None
 fecha = None
-path = None
 
-
+#Evento del boton archivo
 def on_btArchivo_clic():
     global path
     path = fdl.askopenfilename()
@@ -29,6 +30,7 @@ def on_btArchivo_clic():
     btArchivo.configure(text=_txt)
 
 
+#Evento del boton procesar
 def on_btProcesar_clic():
     global path
     global fecha
@@ -66,11 +68,13 @@ def on_btProcesar_clic():
                         'Por favor seleccione una fecha y/o un archivo')
 
 
+#Ventana principal
 win = tk.Tk()
 win.resizable(0, 0)
 win.title("Pedido")
 win.geometry('400x350')
 
+#Frame principal
 f_main = tk.Frame(win)
 f_main.pack(expand=True,fill=tk.BOTH)
 
@@ -83,20 +87,23 @@ f_g2.pack(expand=True)
 f_g3 = tk.Frame(f_main)
 f_g3.pack(expand=True)
 
+#Etiqueta
 label = tk.Label(f_g1, text='Archivo')
-label.configure(font=('Arial',18))
+label.configure(font=('Arial',18)) #Configuracion para windows
 label.grid(row=0, column=0)
 
+#Boton ubicar XLSX
 btArchivo = tk.Button(f_g1, text='Seleccionar...', command=on_btArchivo_clic)
-btArchivo.config(font=('Arial',16))
+btArchivo.config(font=('Arial',16)) #Configuracion para windows
 btArchivo.grid(row=0, column=1)
 
+#Calendario
 calendar = cld.Calendar(f_g2,
                         selectmode='day',
                         year=hoy.year,
                         month=hoy.month,
                         day=hoy.day,
-                        font=('Arial',16),
+                        font=('Arial',16), #Configuracion para windows
                         locale='es_CO',
                         bordercolor='black',
                         background='#009600',
@@ -111,8 +118,9 @@ calendar = cld.Calendar(f_g2,
                         normalforeground='black')
 calendar.pack(expand=True)
 
+#Boton procesar
 btProcesar = tk.Button(f_g3, text='Procesar', command=on_btProcesar_clic)
-btProcesar.config(font=('Arial',16))
+btProcesar.config(font=('Arial',16)) #Configuracion para windows
 btProcesar.pack()
 
 if __name__ == "__main__":
